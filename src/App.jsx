@@ -861,13 +861,22 @@ const exportRef=useRef(null);
 
 const exportImg=async()=>{
   if(!exportRef.current)return;
+  exportRef.current.classList.add("exporting");
+  await new Promise(r=>setTimeout(r,50));
   const canvas=await html2canvas(exportRef.current,{
     scale:2,
     useCORS:true,
+    allowTaint:true,
     backgroundColor:"#fffdf8",
     width:exportRef.current.offsetWidth,
     windowWidth:exportRef.current.offsetWidth,
+    onclone:(doc)=>{
+      doc.querySelectorAll("[data-export-color]").forEach(el=>{
+        el.style.color=el.dataset.exportColor;
+      });
+    },
   });
+  exportRef.current.classList.remove("exporting");
   const link=document.createElement("a");
   link.download=`${cur?.title||"卦象"}_${tabs.find(t=>t.id===tab)?.lb||tab}.png`;
   link.href=canvas.toDataURL("image/png");
@@ -914,6 +923,8 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 .hbtn:hover{border-color:#c9a84c;color:#8b6914}
 .hitm{font-family:'Noto Serif SC',serif;background:transparent;border:none;color:#6b5b4a;cursor:pointer;padding:12px 16px;text-align:left;width:100%;transition:all 0.2s;border-bottom:1px solid #f0ebe3;font-size:15px}
 .hitm:hover{background:#f5f0e8;color:#8b6914}
+.export-header{display:none}
+.exporting .export-header{display:block}
 `}</style>
 
 <div style={{maxWidth:"640px",margin:"0 auto",padding:"36px 20px 80px"}}>
@@ -951,23 +962,23 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 
 {/* Content */}
 {show&&cur&&<div className="fade" ref={ref}>
-<div ref={exportRef} style={{background:"#fffdf8",paddingBottom:"16px"}}>
+<div ref={exportRef} style={{background:"#fffdf8",padding:"0 28px 32px"}}>
 {/* 卦象头部（仅用于导出，静态无动画） */}
-<div style={{textAlign:"center",padding:"28px 0 20px",borderBottom:"1px solid #e8e0d4",marginBottom:"0"}}>
-<div style={{fontSize:"12px",color:"#b0a494",letterSpacing:"6px",marginBottom:"16px"}}>易经 · 道德经 · 金刚经 · 黄帝内经</div>
-<div style={{marginBottom:"12px",display:"flex",justifyContent:"center",gap:"16px",fontSize:"14px",color:"#9a8b78"}}>
-<span>{TRI[cur.up]} {cur.up}</span><span style={{opacity:0.3}}>|</span><span>{TRI[cur.lo]} {cur.lo}</span>
+<div className="export-header" style={{textAlign:"center",padding:"28px 0 20px",borderBottom:"1px solid #e8e0d4",marginBottom:"0"}}>
+<div style={{fontSize:"12px",color:"#9a8b78",letterSpacing:"6px",marginBottom:"16px"}}>易经 · 道德经 · 金刚经 · 黄帝内经</div>
+<div style={{marginBottom:"12px",display:"flex",justifyContent:"center",gap:"16px",fontSize:"14px",color:"#6b5b4a"}}>
+<span>{TRI[cur.up]} {cur.up}</span><span style={{color:"#c9a84c"}}>|</span><span>{TRI[cur.lo]} {cur.lo}</span>
 </div>
 <div style={{margin:"0 auto 12px",width:"fit-content"}}>
 {[...(TMAP[cur.up]||[]),...(TMAP[cur.lo]||[])].map((l,i)=>(
 <div key={i} style={{display:"flex",justifyContent:"center",gap:l===0?"14px":"0",margin:"5px 0"}}>
-{l===1?<div style={{width:"120px",height:"11px",background:"linear-gradient(90deg,#b8860b,#d4a017,#b8860b)",borderRadius:"2px",boxShadow:"0 0 8px rgba(184,134,11,0.3)"}}/>:
-<>{["",""].map((_,j)=><div key={j} style={{width:"50px",height:"11px",background:"linear-gradient(90deg,#8b7355,#a0926b,#8b7355)",borderRadius:"2px"}}/>)}</>}
+{l===1?<div style={{width:"120px",height:"11px",background:"#c9a84c",borderRadius:"2px"}}/>:
+<>{["",""].map((_,j)=><div key={j} style={{width:"50px",height:"11px",background:"#8b7355",borderRadius:"2px"}}/>)}</>}
 </div>
 ))}
 </div>
-<div style={{fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",fontSize:"24px",color:"#8b6914",letterSpacing:"4px",marginBottom:"4px"}}>{cur.title}</div>
-<div style={{fontSize:"13px",color:"#9a8b78"}}>第{cur.n}卦</div>
+<div style={{fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",fontSize:"24px",color:"#7a5c10",letterSpacing:"4px",marginBottom:"4px"}}>{cur.title}</div>
+<div style={{fontSize:"13px",color:"#6b5b4a"}}>第{cur.n}卦</div>
 </div>
 
 {/* Guaci */}
