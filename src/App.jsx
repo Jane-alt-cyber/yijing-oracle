@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import html2canvas from "html2canvas";
 
 // ============================================================
 // HEXAGRAM DATA (64卦完整数据)
@@ -856,6 +857,22 @@ const[tab,setTab]=useState("base");
 const[hist,setHist]=useState([]);
 const[showHist,setShowHist]=useState(false);
 const ref=useRef(null);
+const exportRef=useRef(null);
+
+const exportImg=async()=>{
+  if(!exportRef.current)return;
+  const canvas=await html2canvas(exportRef.current,{
+    scale:2,
+    useCORS:true,
+    backgroundColor:"#fffdf8",
+    width:exportRef.current.offsetWidth,
+    windowWidth:exportRef.current.offsetWidth,
+  });
+  const link=document.createElement("a");
+  link.download=`${cur?.title||"卦象"}_${tabs.find(t=>t.id===tab)?.lb||tab}.png`;
+  link.href=canvas.toDataURL("image/png");
+  link.click();
+};
 
 const cast=()=>{
   setShow(false);setRLines(0);setRevealing(true);setTab("base");
@@ -934,6 +951,7 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 
 {/* Content */}
 {show&&cur&&<div className="fade" ref={ref}>
+<div ref={exportRef} style={{background:"#fffdf8",paddingBottom:"16px"}}>
 {/* Guaci */}
 <div style={{textAlign:"center",padding:"16px 0",marginBottom:"24px",borderTop:"1px solid #e8e0d4",borderBottom:"1px solid #e8e0d4"}}>
 <span style={{fontSize:"13px",color:"#b0a494"}}>卦辞</span>
@@ -986,6 +1004,13 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 {NOTES[cur.n]?.meaning_ext&&<p style={{fontSize:"16px",lineHeight:2.2,color:"#4a4036",marginBottom:"16px",textIndent:"2em"}}>{NOTES[cur.n].meaning_ext}</p>}
 </div>}
 
+</div>
+</div>
+
+{/* 导出按钮 */}
+<div style={{textAlign:"center",marginTop:"20px",marginBottom:"8px"}}>
+  <button onClick={exportImg} style={{fontFamily:"'Noto Serif SC',serif",fontSize:"13px",color:"#8b6914",background:"transparent",border:"1px solid #c9a84c",borderRadius:"20px",padding:"8px 24px",cursor:"pointer",letterSpacing:"2px",opacity:0.8}}>导出图片</button>
+  <p style={{fontSize:"11px",color:"#b0a494",marginTop:"6px"}}>切换 tab 后可分别导出</p>
 </div>
 
 {/* History */}
