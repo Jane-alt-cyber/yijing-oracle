@@ -862,17 +862,34 @@ const exportRef=useRef(null);
 const exportImg=async()=>{
   if(!exportRef.current)return;
   exportRef.current.classList.add("exporting");
-  await new Promise(r=>setTimeout(r,50));
-  const canvas=await html2canvas(exportRef.current,{
+  await new Promise(r=>setTimeout(r,80));
+  const el=exportRef.current;
+  const canvas=await html2canvas(el,{
     scale:2,
     useCORS:true,
     allowTaint:true,
     backgroundColor:"#fffdf8",
-    width:exportRef.current.offsetWidth,
-    windowWidth:exportRef.current.offsetWidth,
-    onclone:(doc)=>{
-      doc.querySelectorAll("[data-export-color]").forEach(el=>{
-        el.style.color=el.dataset.exportColor;
+    width:el.offsetWidth,
+    height:el.scrollHeight,
+    windowWidth:el.offsetWidth,
+    windowHeight:el.scrollHeight,
+    scrollX:0,
+    scrollY:0,
+    logging:false,
+    onclone:(_doc,clone)=>{
+      clone.style.background="#fffdf8";
+      clone.style.padding="32px 36px 40px";
+      clone.querySelectorAll("*").forEach(node=>{
+        const cs=window.getComputedStyle(node);
+        const c=cs.color;
+        if(c&&c.includes("rgba")){
+          node.style.color=c.replace(/rgba\(([^,]+),([^,]+),([^,]+),[^)]+\)/,
+            (_,r,g,b)=>`rgb(${r},${g},${b})`);
+        }
+        const bg=cs.backgroundColor;
+        if(bg&&bg.includes("rgba(0, 0, 0, 0)")){
+          node.style.backgroundColor="transparent";
+        }
       });
     },
   });
