@@ -952,8 +952,26 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 {/* Content */}
 {show&&cur&&<div className="fade" ref={ref}>
 <div ref={exportRef} style={{background:"#fffdf8",paddingBottom:"16px"}}>
+{/* 卦象头部（仅用于导出，静态无动画） */}
+<div style={{textAlign:"center",padding:"28px 0 20px",borderBottom:"1px solid #e8e0d4",marginBottom:"0"}}>
+<div style={{fontSize:"12px",color:"#b0a494",letterSpacing:"6px",marginBottom:"16px"}}>易经 · 道德经 · 金刚经 · 黄帝内经</div>
+<div style={{marginBottom:"12px",display:"flex",justifyContent:"center",gap:"16px",fontSize:"14px",color:"#9a8b78"}}>
+<span>{TRI[cur.up]} {cur.up}</span><span style={{opacity:0.3}}>|</span><span>{TRI[cur.lo]} {cur.lo}</span>
+</div>
+<div style={{margin:"0 auto 12px",width:"fit-content"}}>
+{[...(TMAP[cur.up]||[]),...(TMAP[cur.lo]||[])].map((l,i)=>(
+<div key={i} style={{display:"flex",justifyContent:"center",gap:l===0?"14px":"0",margin:"5px 0"}}>
+{l===1?<div style={{width:"120px",height:"11px",background:"linear-gradient(90deg,#b8860b,#d4a017,#b8860b)",borderRadius:"2px",boxShadow:"0 0 8px rgba(184,134,11,0.3)"}}/>:
+<>{["",""].map((_,j)=><div key={j} style={{width:"50px",height:"11px",background:"linear-gradient(90deg,#8b7355,#a0926b,#8b7355)",borderRadius:"2px"}}/>)}</>}
+</div>
+))}
+</div>
+<div style={{fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",fontSize:"24px",color:"#8b6914",letterSpacing:"4px",marginBottom:"4px"}}>{cur.title}</div>
+<div style={{fontSize:"13px",color:"#9a8b78"}}>第{cur.n}卦</div>
+</div>
+
 {/* Guaci */}
-<div style={{textAlign:"center",padding:"16px 0",marginBottom:"24px",borderTop:"1px solid #e8e0d4",borderBottom:"1px solid #e8e0d4"}}>
+<div style={{textAlign:"center",padding:"16px 0",marginBottom:"24px",borderBottom:"1px solid #e8e0d4"}}>
 <span style={{fontSize:"13px",color:"#b0a494"}}>卦辞</span>
 <p style={{fontSize:"18px",color:"#3a3228",marginTop:"8px",lineHeight:2,letterSpacing:"1px"}}>{cur.guaci}</p>
 </div>
