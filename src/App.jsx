@@ -861,39 +861,42 @@ const exportRef=useRef(null);
 
 const exportImg=async()=>{
   if(!exportRef.current)return;
+  // 1. 先把隐藏的卦象头部显示出来
   exportRef.current.classList.add("exporting");
-  await new Promise(r=>setTimeout(r,80));
+  await new Promise(r=>setTimeout(r,100));
+
+  // 2. 在页面之外创建一个离屏容器，宽度固定，高度 auto
   const el=exportRef.current;
-  const canvas=await html2canvas(el,{
+  const w=el.offsetWidth;
+  const container=document.createElement("div");
+  container.style.cssText=`position:fixed;top:-99999px;left:0;width:${w}px;background:#fffdf8;padding:32px 36px 40px;box-sizing:border-box;`;
+  const clone=el.cloneNode(true);
+  // 3. 移除 fade 动画，让所有元素完全不透明
+  clone.querySelectorAll(".fade").forEach(n=>{
+    n.style.animation="none";
+    n.style.opacity="1";
+    n.style.transform="none";
+  });
+  // 4. 显示 export-header（它在原 DOM 里是 display:none）
+  clone.querySelectorAll(".export-header").forEach(n=>{
+    n.style.display="block";
+  });
+  container.appendChild(clone);
+  document.body.appendChild(container);
+
+  // 5. 等布局稳定后截图，高度由内容自动撑开
+  await new Promise(r=>setTimeout(r,50));
+  const canvas=await html2canvas(container,{
     scale:2,
     useCORS:true,
-    allowTaint:true,
     backgroundColor:"#fffdf8",
-    width:el.offsetWidth,
-    height:el.scrollHeight,
-    windowWidth:el.offsetWidth,
-    windowHeight:el.scrollHeight,
-    scrollX:0,
-    scrollY:0,
     logging:false,
-    onclone:(_doc,clone)=>{
-      clone.style.background="#fffdf8";
-      clone.style.padding="32px 36px 40px";
-      clone.querySelectorAll("*").forEach(node=>{
-        const cs=window.getComputedStyle(node);
-        const c=cs.color;
-        if(c&&c.includes("rgba")){
-          node.style.color=c.replace(/rgba\(([^,]+),([^,]+),([^,]+),[^)]+\)/,
-            (_,r,g,b)=>`rgb(${r},${g},${b})`);
-        }
-        const bg=cs.backgroundColor;
-        if(bg&&bg.includes("rgba(0, 0, 0, 0)")){
-          node.style.backgroundColor="transparent";
-        }
-      });
-    },
+    width:w+72,
+    windowWidth:w+72,
   });
+  document.body.removeChild(container);
   exportRef.current.classList.remove("exporting");
+
   const link=document.createElement("a");
   link.download=`${cur?.title||"卦象"}_${tabs.find(t=>t.id===tab)?.lb||tab}.png`;
   link.href=canvas.toDataURL("image/png");
