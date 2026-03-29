@@ -864,15 +864,18 @@ const exportImg=async()=>{
   exportRef.current.classList.add("exporting");
   await new Promise(r=>setTimeout(r,150));
 
-  const canvas=await html2canvas(exportRef.current,{
+  const el=exportRef.current;
+  const canvas=await html2canvas(el,{
     scale:2,
     useCORS:true,
     allowTaint:true,
     backgroundColor:"#fffdf8",
     logging:false,
-    onclone:(_doc,el)=>{
-      el.querySelectorAll(".export-header").forEach(n=>{n.style.display="block";});
-      el.querySelectorAll(".fade").forEach(n=>{
+    height:el.scrollHeight,
+    windowHeight:el.scrollHeight,
+    onclone:(_doc,clonedEl)=>{
+      clonedEl.querySelectorAll(".export-header").forEach(n=>{n.style.display="block";});
+      clonedEl.querySelectorAll(".fade").forEach(n=>{
         n.style.animation="none";
         n.style.opacity="1";
         n.style.transform="none";
@@ -915,7 +918,7 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 <style>{`
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden}
+html,body{overflow-x:hidden;background:#faf7f2}
 .cast-btn{font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:20px;color:#8b6914;background:transparent;border:1.5px solid #c9a84c;padding:14px 44px;cursor:pointer;letter-spacing:6px;transition:all 0.3s;border-radius:4px}
 .cast-btn:hover{background:rgba(201,168,76,0.08);box-shadow:0 0 20px rgba(201,168,76,0.15)}
 .cast-btn:active{transform:scale(0.97)}
