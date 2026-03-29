@@ -861,40 +861,25 @@ const exportRef=useRef(null);
 
 const exportImg=async()=>{
   if(!exportRef.current)return;
-  // 1. 先把隐藏的卦象头部显示出来
   exportRef.current.classList.add("exporting");
-  await new Promise(r=>setTimeout(r,100));
+  await new Promise(r=>setTimeout(r,150));
 
-  // 2. 在页面之外创建一个离屏容器，宽度固定，高度 auto
-  const el=exportRef.current;
-  const w=el.offsetWidth;
-  const container=document.createElement("div");
-  container.style.cssText=`position:fixed;top:-99999px;left:0;width:${w}px;background:#fffdf8;padding:32px 36px 40px;box-sizing:border-box;`;
-  const clone=el.cloneNode(true);
-  // 3. 移除 fade 动画，让所有元素完全不透明
-  clone.querySelectorAll(".fade").forEach(n=>{
-    n.style.animation="none";
-    n.style.opacity="1";
-    n.style.transform="none";
-  });
-  // 4. 显示 export-header（它在原 DOM 里是 display:none）
-  clone.querySelectorAll(".export-header").forEach(n=>{
-    n.style.display="block";
-  });
-  container.appendChild(clone);
-  document.body.appendChild(container);
-
-  // 5. 等布局稳定后截图，高度由内容自动撑开
-  await new Promise(r=>setTimeout(r,50));
-  const canvas=await html2canvas(container,{
+  const canvas=await html2canvas(exportRef.current,{
     scale:2,
     useCORS:true,
+    allowTaint:true,
     backgroundColor:"#fffdf8",
     logging:false,
-    width:w+72,
-    windowWidth:w+72,
+    onclone:(_doc,el)=>{
+      el.querySelectorAll(".export-header").forEach(n=>{n.style.display="block";});
+      el.querySelectorAll(".fade").forEach(n=>{
+        n.style.animation="none";
+        n.style.opacity="1";
+        n.style.transform="none";
+      });
+    }
   });
-  document.body.removeChild(container);
+
   exportRef.current.classList.remove("exporting");
 
   const link=document.createElement("a");
