@@ -915,6 +915,7 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 <style>{`
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
 .cast-btn{font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:20px;color:#8b6914;background:transparent;border:1.5px solid #c9a84c;padding:14px 44px;cursor:pointer;letter-spacing:6px;transition:all 0.3s;border-radius:4px}
 .cast-btn:hover{background:rgba(201,168,76,0.08);box-shadow:0 0 20px rgba(201,168,76,0.15)}
 .cast-btn:active{transform:scale(0.97)}
@@ -930,13 +931,17 @@ return <div style={{minHeight:"100vh",background:"#faf7f2",color:"#3a3228",fontF
 .hitm:hover{background:#f5f0e8;color:#8b6914}
 .export-header{display:none}
 .exporting .export-header{display:block}
+@media(max-width:480px){
+  .cast-btn{font-size:18px;padding:12px 32px;letter-spacing:4px}
+  .tab-b{font-size:13px;padding:12px 8px}
+}
 `}</style>
 
 <div style={{maxWidth:"640px",margin:"0 auto",padding:"36px 20px 80px"}}>
 
 {/* Header */}
 <div style={{textAlign:"center",marginBottom:"40px"}}>
-<div style={{fontSize:"12px",color:"#b0a494",letterSpacing:"8px",marginBottom:"12px"}}>易经 · 道德经 · 金刚经 · 黄帝内经</div>
+<div style={{fontSize:"12px",color:"#b0a494",letterSpacing:"clamp(2px,1.5vw,8px)",marginBottom:"12px"}}>易经 · 道德经 · 金刚经 · 黄帝内经</div>
 <h1 style={{fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",fontSize:"32px",fontWeight:400,color:"#8b6914",letterSpacing:"6px",marginBottom:"10px"}}>四典问道</h1>
 <div style={{width:"50px",height:"1.5px",background:"linear-gradient(90deg,transparent,#c9a84c,transparent)",margin:"0 auto 10px"}}/>
 <p style={{fontSize:"14px",color:"#b0a494",letterSpacing:"2px"}}>一卦通四经 · 静心得妙义</p>
